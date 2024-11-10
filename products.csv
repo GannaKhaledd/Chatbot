@@ -1,0 +1,45 @@
+Category,Product,Price,Description
+Smartphones,iPhone 14,999,Latest Apple smartphone with A16 chip.
+Smartphones,Samsung Galaxy S23,799,High-performance Android phone with stunning display.
+Laptops,Dell XPS 13,1199,Compact and powerful laptop with InfinityEdge display.
+Laptops,MacBook Air M2,1099,Lightweight laptop with Apple's M2 chip for speed.
+Tablets,Apple iPad Pro 12.9,1099,Versatile tablet with Liquid Retina display and M1 chip.
+Tablets,Samsung Galaxy Tab S8,699,Premium Android tablet with S Pen support.
+Headphones,Sony WH-1000XM4,349,Noise-canceling over-ear headphones with superior sound.
+Headphones,Apple AirPods Pro,249,Wireless earbuds with active noise cancellation.
+Cameras,Canon EOS R5,3899,Professional mirrorless camera with incredible resolution.
+Cameras,Nikon Z6 II,1999,Full-frame mirrorless camera with fast autofocus.
+Smartwatches,Apple Watch Series 8,399,Smartwatch with advanced health and fitness tracking.
+Smartwatches,Fitbit Versa 3,229,Health-focused smartwatch with built-in GPS.
+Smart TVs,Sony A80J OLED,1799,Stunning 4K OLED TV with exceptional picture quality.
+Smart TVs,Samsung QN90A,1499,Quantum Dot technology for vibrant colors and deep blacks.
+Gaming Consoles,PlayStation 5,499,Next-gen gaming console with lightning-fast load times.
+Gaming Consoles,Xbox Series X,499,Powerful gaming console with extensive game library.
+Speakers,Bose SoundLink Revolve+,299,Portable Bluetooth speaker with 360-degree sound.
+Speakers,Sonos One,199,Smart speaker with voice control and rich sound.
+Smart Home,Amazon Echo Dot,49,Compact smart speaker with Alexa voice assistant.
+Smart Home,Nest Hub,99,Smart display with Google Assistant for home control.
+Drones,DJI Air 2S,999,High-performance drone with 1-inch sensor for stunning photos.
+Drones,Parrot Anafi,699,Compact drone with 4K HDR camera and 180-degree tilt gimbal.
+Wearables,Oculus Quest 2,299,All-in-one VR headset for immersive gaming experiences.
+Wearables,Garmin Forerunner 245,349,GPS running watch with advanced performance analytics.
+Monitors,LG UltraFine 5K,1299,High-resolution monitor ideal for creative professionals.
+Monitors,ASUS ROG Swift 360Hz,799,Gaming monitor with ultra-fast refresh rate.
+External Storage,SanDisk Extreme SSD 1TB,199,Fast and portable external SSD for data storage.
+External Storage,WD My Passport 2TB,99,Reliable external hard drive for backup and storage.
+Printers,HP LaserJet Pro M404dn,249,High-speed monochrome laser printer for office use.
+Printers,Canon PIXMA TR8620,179,Versatile all-in-one printer with wireless capabilities.
+Gaming Accessories,Razer DeathAdder V2,69,Ergonomic gaming mouse with high precision.
+Gaming Accessories,Logitech G Pro X Keyboard,149,Mechanical gaming keyboard with customizable RGB.
+Home Appliances,Dyson V15 Detect,699,Cordless vacuum with laser technology for hidden dust.
+Home Appliances,Instant Pot Duo 7-in-1,99,Multi-cooker with seven functions for easy meals.
+Fitness Equipment,TRX All-in-One,199,Suspension training system for full-body workouts.
+Fitness Equipment,Fitbit Charge 5,149,Advanced fitness tracker with built-in GPS.
+Kitchen Appliances,Ninja Foodi Grill,199,Indoor grill and air fryer for healthy meals.
+Kitchen Appliances,Keurig K-Elite,149,Single-serve coffee maker with customizable brew strength.
+Bicycles,Trek Marlin 5,649,Versatile mountain bike for trail and road riding.
+Bicycles,Giant Escape 3,499,Lightweight hybrid bike for commuting and recreation.
+Streaming Devices,Roku Streaming Stick 4K,49,Streaming device with access to thousands of channels.
+Streaming Devices,Amazon Fire TV Stick 4K,49,Streaming device with Alexa voice control.
+PC Components,ASUS ROG Strix B550-F,199,Motherboard designed for gaming and high performance.
+PC Components,NVIDIA GeForce RTX 3080,699,High-end graphics card for gaming and content creation.
