@@ -1,5 +1,4 @@
 import os  
-import json
 import shutil
 import panel as pn
 from groq import Groq 
@@ -51,53 +50,61 @@ vector_store = Chroma.from_documents(documents=documents, embedding=embedding, p
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 #----------------------------------------------------------------------------------------------
 cart = []
-def add_to_cart (product_name):
+def add_to_cart(product_name):
     """Add a specified product to the cart."""
-    for product in data:
-        if product ['Product'].lower() == product_name.lower():
-            cart.append(product)
-            return product['Product'] + "has been added to your cart"
-    return "The product you are trying to add to your cart is not available write now."
-#----------------------------------------------------------------------------------------------
-def make_an_order():
+    print(f"Adding product: {product_name}")  
+    for doc in data:
+        content_dict = {}
+        lines = doc.page_content.split('\n')
+        for line in lines:
+            key, value = line.split(": ")
+            content_dict[key.strip()] = value.strip()
+        if content_dict['Product'].lower() == product_name.lower():
+            cart.append(content_dict)
+            print(f"Product added: {content_dict}")  
+            return content_dict['Product'] + " has been added to your cart." 
+    print("Product not found") 
+    return "The product you are trying to add to your cart is not available right now."
+#-------------------------------------------------------------------------------------------------------
+def make_an_order(product_name):
     """Generate an order based on items in the cart."""
-    if len (cart) == 0  :
-        return "Your cart is empty, please fill in you cart and comeback again"
-    order = " "
-    for item in cart :
-        order += item ['Product'] + ", "
-        order = order.rstrip(", ") 
-    return "Your order is " + order
-#----------------------------------------------------------------------------------------------
+    if len(cart) == 0 : 
+        return "Your cart is empty, please fill your cart and come back again."
+    order = ""
+    for product_name in cart:
+       order += product_name['Product'] + ", " 
+    return "Your order is: " + ", ".join(order)  
+#-------------------------------------------------------------------------------------------------------
 def calculate_total_price():
     """Calculate the total price of items in the cart."""
     total_price = 0
     for item in cart:
-        total_price += item['Price']
+        total_price += float(item['Price']) 
     return total_price
-#----------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------
 def do_payment():
     """Process payment for the order."""
-    if len (cart) == 0  :
-        return "Your cart is empty, please fill in you cart and comeback again"
+    if len(cart) == 0 : 
+        return "Your cart is empty, please fill your cart and come back again."
+    
     order = make_an_order() 
-    if "Your order is" not in order:
-        return order  
     payment_method = input("How would you like to pay? (Cash/Credit card):").strip().lower()
-    if payment_method == 'Cash':
-        address = input(" Please provide your address for the delivery : ")
+    
+    if payment_method == 'cash':
+        address = input("Please provide your address for the delivery: ")
         total_price = calculate_total_price()  
         return f"Your order price is {total_price}. It will be delivered to {address}. Thank you for your order! Goodbye!"
-    elif payment_method == 'Credit card':
-        credit_details = input("Please enter your Credit card details: ")
+    
+    elif payment_method == 'credit card':
+        credit_details = input("Please enter your credit card details: ")
         payment_successful = True 
         if payment_successful:
-            return f"Payment was successful! for {order} Thank you for your order!"
+            return f"Payment was successful for {order}. Thank you for your order!"
         else:
-            return "There was an issue with your Visa payment. Please try again."
+            return "There was an issue with your credit card payment. Please try again."
     else:
         return "Invalid payment method selected. Please choose 'Cash' or 'Credit card'."
-#----------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------
 tools = [
     Tool(
         name="Add to Cart",
@@ -125,67 +132,105 @@ tool_names = ['Add to Cart', 'Make an Order','Calculate Total Price', 'Do Paymen
 context = """
 You are a friendly bot designed to assist customers with questions about an electronic store.
 Your goal is to provide helpful and concise information while maintaining a conversational tone.
+Answer the following questions as best you can. You have access to the following tools:
+{tools}
 Instructions:
-1. **Greeting**: Start by greeting the customer in a friendly manner.
+1. **Greeting**: Start by greeting the customer in a friendly manner "Hello, How can I help you today !" without using any tools.
 2. **Personal info**: When the user shares their name, acknowledge it warmly and engage them personally.
 3. **Out of Context**: If a question is unrelated to the products or the store, simply state that you don't have information on that topic while maintaining a friendly tone. 
 4. **Handling Harmful Content**: If questions contain harmful or inappropriate content, politely inform the user that you cannot assist with such inquiries.
 5. **Avoid repeating Apologies**: There's no need to start every response with an apology. Be friendly and direct instead.
 6. **Focus on Electronics**: Keep the conversation centered around the electronic products available and do not suggest unrelated topics.
 7. **Product availability**: If the customer asks for a product that is not available, handle this in a kind way.
-8. Answer the questions by using the followning tools = {{tools}}
-"""
-context_prompt = PromptTemplate( template=context, input_variables=[] )
-#context_prompt = PromptTemplate.from_template(context)
+8. Answer the questions by using the followning tools = {tool_names}
+9- If there is no tools needed to answer the input like greeting, Action will be none
+10. Instructions = Please use the following format 
+Thought : You should always think about what you need to do 
+Action : The action is to use one of the tools 
+Action Input : The input to the action (If the action is not none)
+Observation : Result to the action 
+Thought : I Know the final answer 
+Final Answer : return the final answer
 
+for example : 
+
+1.User input : Hello
+Thought: Do I need to use a tool? No
+Action: None
+Action Input: None
+Observation: No action is needed this is a greeting, reply in friendly tone
+Thought : I now know the final answer
+Final Answer : Hello, How can I help you today !
+
+2. User input : I want to add this laptop to the cart
+Thought: Do I need to use a tool? Yes
+Action: Add to Cart 
+Action Input : I want to add this laptop to the cart
+Observation: I will use the add to cart tool to add the laptop to the cart list
+Thought : I now know the final answer
+Final Answer : Your laptop is added to the cart successfully
+
+Begin!
+
+Question: {input}
+{agent_scratchpad}
+"""
+context_prompt = PromptTemplate(template=context, input_variables=['tools', 'tool_names', 'agent_scratchpad', 'input'])
 #----------------------------------------------------------------------------------------------
 
 agent = create_react_agent(
     llm=llm,
-    tools=tools,
     prompt=context_prompt,
+    tools=tools,
     stop_sequence=True,
 )
-
 agent_executor = AgentExecutor.from_agent_and_tools(
     agent=agent,
     tools=tools,
     verbose=True,
     handle_parsing_errors=True,
+    max_iterations=5
 )
-
 #----------------------------------------------------------------------------------------------
-context = []
+context=[]
 def collect_messages(event):
     user_message = inp.value.strip()
     if not user_message:
         return
     context.append({"role": "user", "content": user_message})
+    inp.value = "" 
+    update_chat_display() 
     try:
         agent_response = agent_executor.invoke({
-            "input": user_message,
-            "response": agent_response 
+            "input": user_message
         })
         if agent_response:
-         return agent_content
+            context.append({"role": "assistant", "content": agent_response})
         else:
-         return ("Sorry, I couldn't understand that.")
+            context.append({"role": "assistant", "content": "Sorry, I couldn't understand that."})
+        
     except OutputParserException as e:
-        agent_content = f"Error: {e}"
-    
-    context.append({"role": "assistant", "content": agent_content})
-    inp.value = ""
-    update_chat_display()
+        context.append({"role": "assistant", "content": f"Error: {e}"})
 
+    update_chat_display()  
+#----------------------------------------------------------------------------------------------
 def update_chat_display():
     chat_contents = []  
     for msg in context:
         role = msg['role'].capitalize()
         content = msg['content']
         if role == "User":
-            chat_contents.append(f'<div style="text-align: right;"><span style="background-color: #DCF8C6; padding: 8px; border-radius: 10px; display: inline-block;">You: {content}</span></div>')
+            chat_contents.append(
+                f'<div style="text-align: right;">'
+                f'<span style="background-color: #DCF8C6; padding: 8px; border-radius: 10px; display: inline-block;">'
+                f'You: {content}</span></div>'
+            )
         else:
-            chat_contents.append(f'<div style="text-align: left;"><span style="background-color: #E6E6E6; padding: 8px; border-radius: 10px; display: inline-block;">Bot: {content}</span></div>')
+            chat_contents.append(
+                f'<div style="text-align: left;">'
+                f'<span style="background-color: #E6E6E6; padding: 8px; border-radius: 10px; display: inline-block;">'
+                f'Bot: {content}</span></div>'
+            )
     
     message_display.object = (
         "<div id='chat-container' style='height: 400px; overflow-y: auto;'>"
